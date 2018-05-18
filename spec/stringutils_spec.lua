@@ -1,4 +1,4 @@
-local stringutils = require "stringutils"
+local stringutils = require "easy-crypto.stringutils"
 
 describe("stringutils", function()
 

@@ -17,6 +17,7 @@ dependencies = {
 build = {
    type = "builtin",
    modules = {
-     ["resty.easy-crypto"] = "src/easy-crypto.lua"
+     ["resty.easy-crypto"] = "src/easy-crypto.lua",
+     ["resty.easy-crypto.stringutils"] = "src/easy-crypto/stringutils.lua"
    }
 }

@@ -1,4 +1,4 @@
-local stringutils = require "stringutils"
+local stringutils = require "easy-crypto.stringutils"
 local knuth  = require "resty.nettle.knuth-lfib"
 local yarrow = require "resty.nettle.yarrow"
 local pbkdf2 = require "resty.nettle.pbkdf2"
