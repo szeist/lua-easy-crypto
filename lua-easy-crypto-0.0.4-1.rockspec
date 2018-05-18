@@ -1,9 +1,8 @@
 package = "lua-easy-crypto"
-version = "0.0.3-1"
+version = "0.0.4-1"
 source = {
-   url = "git://github.com/szeist/lua-easy-crypto.git",
-   tag = "v0.0.3",
-   dir = "lua-easy-crypto"
+   url = "git+https://github.com/szeist/lua-easy-crypto.git",
+   tag = "v0.0.4",
 }
 description = {
    summary = "Simple interface for password based AES-256-GCM encryption and decryption.",
