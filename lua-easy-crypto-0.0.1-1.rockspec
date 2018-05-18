@@ -1,7 +1,7 @@
 package = "lua-easy-crypto"
 version = "0.0.1-1"
 source = {
-   url = "git://github.com/emartech/escher-lua",
+   url = "git://github.com/lua-easy-crypto",
    tag = "v0.0.1",
    dir = "lua-easy-crypto"
 }
