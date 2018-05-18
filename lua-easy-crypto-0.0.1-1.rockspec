@@ -1,8 +1,8 @@
 package = "lua-easy-crypto"
-version = "0.0.1-1"
+version = "0.0.1-2"
 source = {
    url = "git://github.com/szeist/lua-easy-crypto.git",
-   tag = "v0.0.1",
+   tag = "v0.0.2",
    dir = "lua-easy-crypto"
 }
 description = {
