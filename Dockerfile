@@ -1,7 +1,7 @@
 FROM kong:0.13.0-centos
 
 RUN yum install -y epel-release
-RUN yum install -y openssl-devel gcc unzip luajit git
+RUN yum install -y openssl-devel gcc unzip luajit git zip
 
 WORKDIR /app
 
