@@ -1,30 +1,29 @@
-local stringutils = require "resty.easy-crypto.stringutils"
-local knuth  = require "resty.nettle.knuth-lfib"
-local yarrow = require "resty.nettle.yarrow"
-local pbkdf2 = require "resty.nettle.pbkdf2"
-local aes = require "resty.nettle.aes"
+local rand = require "openssl.rand"
+local cipher = require "openssl.cipher"
+local sha256 = require "bgcrypto.sha256"
+local base64 = require "base64"
+local algo = 'aes-256-ctr'
 
 local KEY_BYTES = 32
 
-local randomGen = yarrow.new(knuth.new(os.time()):random(32))
-
 local EasyCrypto = {
+  cipher = 'AES-256-CTR',
   saltSize = 12,
-  ivSize = 12,
+  ivSize = 16,
   iterationCount = 10000
 }
 
-local function createEncryptedString(salt, iv, ciphertext, authTag)
-  return salt .. iv .. stringutils.toHex(ciphertext) .. stringutils.toHex(authTag)
+local function createEncryptedString(salt, iv, ciphertext)
+  return base64.encode(salt .. iv .. ciphertext)
 end
 
-local function parseEncryptedString(encrypted, saltSize, ivSize)
+local function parseEncryptedString(encryptedBase64, saltSize, ivSize)
+  local encrypted = base64.decode(encryptedBase64)
   local salt = encrypted:sub(0, saltSize)
   local iv = encrypted:sub(saltSize + 1, saltSize + ivSize)
-  local ciphertext = stringutils.fromHex(encrypted:sub(saltSize + ivSize + 1, encrypted:len() - KEY_BYTES))
-  local authTag = stringutils.fromHex(encrypted:sub(encrypted:len() - KEY_BYTES + 1))
+  local ciphertext = encrypted:sub(saltSize + ivSize + 1)
 
-  return salt, iv, ciphertext, authTag
+  return salt, iv, ciphertext
 end
 
 function EasyCrypto:new(config)
@@ -35,28 +34,22 @@ function EasyCrypto:new(config)
 end
 
 function EasyCrypto:encrypt(password, data)
-  local salt = stringutils.toHex(randomGen:random(self.saltSize / 2))
-  local hmac = stringutils.toHex(pbkdf2.hmac_sha256(password, self.iterationCount, salt, KEY_BYTES / 2))
-  local iv = stringutils.toHex(randomGen:random(self.ivSize / 2))
+  local salt = rand.bytes(self.saltSize)
+  local key = sha256.pbkdf2(password, salt, self.iterationCount, KEY_BYTES)
+  local iv = rand.bytes(self.ivSize)
 
-  local aes256 = aes.new(hmac, "gcm", iv)
-  local ciphertext, authTag = aes256:encrypt(data)
+  local encrypted = cipher.new(self.cipher):encrypt(key, iv):final(data)
 
-  return createEncryptedString(salt, iv, ciphertext, authTag), nil
+  return createEncryptedString(salt, iv, encrypted), nil
 end
 
 function EasyCrypto:decrypt(password, encrypted)
-  local salt, iv, ciphertext, authTag = parseEncryptedString(encrypted, self.saltSize, self.ivSize)
+  local salt, iv, ciphertext = parseEncryptedString(encrypted, self.saltSize, self.ivSize)
 
-  local hmac = stringutils.toHex(pbkdf2.hmac_sha256(password, self.iterationCount, salt, KEY_BYTES / 2))
-  local aes256 = aes.new(hmac, "gcm", iv)
-  local decrypted, digest  = aes256:decrypt(ciphertext)
+  local key = sha256.pbkdf2(password, salt, self.iterationCount, KEY_BYTES)
+  local decrypted = cipher.new(self.cipher):decrypt(key, iv):final(ciphertext)
 
-  if authTag == digest then
-    return decrypted, nil
-  else
-    return nil, "authentication error"
-  end
+  return decrypted, nil
 end
 
 return EasyCrypto

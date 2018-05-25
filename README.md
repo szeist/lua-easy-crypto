@@ -1,6 +1,6 @@
 # lua-easy-crypto
 
-Simple interface for password based AES-256-GCM encryption and decryption using the [lua-resty-nettle](https://github.com/bungle/lua-resty-nettle) library.
+Simple interface for password based AES-256 encryption and decryption using the [lua-resty-nettle](https://github.com/bungle/lua-resty-nettle) library.
 
 ## Usage
 
@@ -9,7 +9,7 @@ local EasyCrypto = require "resty.easy-crypto"
 
 local ecrypto = EasyCrypto:new({ -- Initialize with default values
   saltSize = 12,
-  ivSize = 12,
+  ivSize = 16, -- for CTR mode
   iterationCount = 10000
 })
 
