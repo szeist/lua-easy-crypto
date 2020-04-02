@@ -26,6 +26,8 @@ local function parseEncryptedString(encryptedBase64, saltSize, ivSize)
   return salt, iv, ciphertext
 end
 
+local ecrypto
+
 function EasyCrypto:new(config)
   ecrypto = ecrypto or {}
   setmetatable(ecrypto, self)
