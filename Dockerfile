@@ -1,14 +1,19 @@
-FROM kong:0.13.0-centos
+FROM kong/kong-gateway:3.4.1.1-ubuntu
 
-RUN yum install -y epel-release
-RUN yum install -y openssl-devel gcc unzip luajit git zip
+USER root
+
+RUN apt-get update -y && \
+    apt-get install -y \
+    unzip \
+    zip \
+    gcc \
+    libssl-dev
 
 WORKDIR /app
 
 RUN luarocks install busted
-RUN luarocks install inspect
 
-COPY ./*.rockspec /app
+COPY ./*.rockspec /app/
 
 RUN luarocks build --only-deps *.rockspec
 
