@@ -1,8 +1,8 @@
 package = "lua-easy-crypto"
-version = "2.0.0-1"
+version = "1.1.0-1"
 source = {
    url = "git+https://github.com/szeist/lua-easy-crypto.git",
-   tag = "v2.0.0",
+   tag = "v1.1.0",
 }
 description = {
    summary = "Simple interface for password based AES-256 encryption and decryption.",
